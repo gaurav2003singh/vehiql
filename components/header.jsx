@@ -1,26 +1,21 @@
+"use client";
+
 import { SignedIn } from "@clerk/nextjs";
-import { CarFront, Link } from "lucide-react";
+import { CarFront } from "lucide-react";
 import React from "react";
 import { Button } from "./ui/button";
+import Image from "next/image";
+import Link from "next/link";
 
-
-//   
-//   return
-//   <div>
-//
-//   </div>
-// };
-
+ 
 const Header = ({ isAdminPage }) => {
   const isAdmin = false;
   return (
     <div>
       <header className="fixed top-0 w-full bg-white/80 backdrop-blur-md z-50 border-b">
-        
         <nav className="mx-auto px-4 py-4 flex items-center justify-between">
           <Link href={isAdminPage ? "/admin" : "/"}>
-           
-            <image
+            <Image
               src={"/logo.png"}
               alt="Vehiql Logo"
               width={200}
@@ -35,9 +30,8 @@ const Header = ({ isAdminPage }) => {
             <SignedIn>
               <Link href="/saved-cars">
                 <Button>
-                  <CarFront size={18}/>
+                  <CarFront size={18} />
                   <span className="hidden md:inline">Saved Cars</span>
-                  
                 </Button>
               </Link>
             </SignedIn>
