@@ -1,5 +1,3 @@
-
-
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
 import { ArrowLeft, CarFront, Heart, Layout } from "lucide-react";
 import React from "react";
@@ -65,10 +63,15 @@ const Header = async ({ isAdminPage = false }) => {
               </SignInButton>
             </SignedOut>
 
-           <SignedIn>
-            <UserButton/>
-           </SignedIn>
-
+            <SignedIn>
+              <UserButton
+                appearance={{
+                  elements: {
+                    avatarBox: "w-10 h-10",
+                  },
+                }} 
+              />
+            </SignedIn>
           </div>
         </nav>
       </header>

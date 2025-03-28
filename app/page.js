@@ -1,11 +1,18 @@
-import { Button } from "@/components/ui/button";
+
 
 export default async function Home() {
-  return(
-   <div className="flex  justify-center items-center mt-40 gap-2"><h1 className="font-bold text-fuchsia-700">subscribe to RoadsideCoder</h1>
+  return (
+    <div className="pt-20 flex flex-col">
+      {/* Hero-section */}
 
-      <Button variant="outline">click</Button>
-   </div>
-  )
-  
+      <section className="relative py-16 md:py-28 bg-amber-300">
+        <div>
+          <div>
+            <h1>Find your Dream Car with Vehiql AI</h1>
+            <p>Advanced AI car search and test drive from thousands of vehicles.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
 }
