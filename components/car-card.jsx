@@ -7,6 +7,7 @@ import { CarIcon, Heart } from "lucide-react";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import { useRouter } from "next/navigation";
+import { featuredCars } from "@/lib/data";
 
 export const CarCard = ({ car }) => {
   const [isSaved, setIsSaved] = useState(car.wishlisted);
@@ -14,6 +15,7 @@ export const CarCard = ({ car }) => {
   const handleToggleSave = async (e) => {};
   return (
     <Card className="overflow-hidden  hover:shadow-lg transition group">
+     
       <div className="relative h-48">
         {car.images && car.images.length > 0 ? (
           <div className="relative w-full h-full">
