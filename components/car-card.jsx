@@ -15,7 +15,6 @@ export const CarCard = ({ car }) => {
   const handleToggleSave = async (e) => {};
   return (
     <Card className="overflow-hidden  hover:shadow-lg transition group">
-     
       <div className="relative h-48">
         {car.images && car.images.length > 0 ? (
           <div className="relative w-full h-full">
