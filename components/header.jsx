@@ -4,9 +4,11 @@ import React from "react";
 import { Button } from "./ui/button";
 import Image from "next/image";
 import Link from "next/link";
+import { checkUser } from "@/lib/checkUser";
 
 const Header = async ({ isAdminPage = false }) => {
-  const isAdmin = false;
+  const user = await checkUser();
+  const isAdmin = user?.role === "ADMIN";
   return (
     <div>
       <header className="fixed top-0 w-full bg-white/80 backdrop-blur-md z-50 border-b">
@@ -69,7 +71,7 @@ const Header = async ({ isAdminPage = false }) => {
                   elements: {
                     avatarBox: "w-10 h-10",
                   },
-                }} 
+                }}
               />
             </SignedIn>
           </div>
