@@ -7,10 +7,6 @@ datasource db {
   url      = "file:./dev.db"
 }
 
-
-
-
-
 model User {
   id          String             @id @default(uuid())
   clerkUserId String             @unique // clerk user id
@@ -68,10 +64,10 @@ enum CarStatus {
 
 // Model for storing car images
 model CarImage {
-  id      String @id @default(uuid())
-  carId   String
-  car     Car    @relation(fields: [carId], references: [id], onDelete: Cascade)
-  url     String // Supabase storage URL
+  id        String   @id @default(uuid())
+  carId     String
+  car       Car      @relation(fields: [carId], references: [id], onDelete: Cascade)
+  url       String // Supabase storage URL
   createdAt DateTime @default(now())
 
   @@index([carId])
