@@ -1,6 +1,5 @@
 "use client";
-
-import React from 'react'
+import React from "react";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -32,7 +31,7 @@ const routes = [
   },
 ];
 
- const Sidebar = () => {
+const Sidebar = () => {
   const pathname = usePathname();
 
   return (
@@ -97,8 +96,5 @@ const routes = [
     </>
   );
 };
-
-
-
 
 export default Sidebar;
