@@ -239,7 +239,6 @@ export async function getCars(search = "") {
 
 // Delete a car by ID
 
-
 export async function deleteCar(id) {
   try {
     const { userId } = await auth();
@@ -269,7 +268,13 @@ export async function deleteCar(id) {
     }
 
     // Optionally: delete the entire folder for the car
-    const folderPath = path.join(process.cwd(), "public", "uploads", "cars", id);
+    const folderPath = path.join(
+      process.cwd(),
+      "public",
+      "uploads",
+      "cars",
+      id
+    );
     try {
       await fs.rmdir(folderPath, { recursive: true });
     } catch (err) {
@@ -295,7 +300,6 @@ export async function deleteCar(id) {
     };
   }
 }
-
 
 // Update car status or featured status
 export async function updateCarStatus(id, { status, featured }) {

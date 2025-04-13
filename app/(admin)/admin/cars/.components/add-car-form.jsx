@@ -118,7 +118,7 @@ const AddCarForm = () => {
     error: processImageError,
   } = useFetch(processCarImageWithAI);
 
- const processWithAI = async () => {
+  const processWithAI = async () => {
     if (!uploadedAiImage) {
       toast.error("Please upload an image first");
       return;
@@ -126,7 +126,6 @@ const AddCarForm = () => {
 
     await processImageFn(uploadedAiImage);
   };
-
 
   useEffect(() => {
     if (addCarResult?.success) {
@@ -140,7 +139,7 @@ const AddCarForm = () => {
     }
   }, [processImageError]);
 
-   // Handle successful AI processing
+  // Handle successful AI processing
   useEffect(() => {
     if (processImageResult?.success) {
       const carDetails = processImageResult.data;
@@ -174,10 +173,6 @@ const AddCarForm = () => {
       setActiveTab("manual");
     }
   }, [processImageResult, setValue, uploadedAiImage]);
-
- 
-
-  
 
   const onAiDrop = useCallback((acceptedFiles) => {
     const file = acceptedFiles[0];
