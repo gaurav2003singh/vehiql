@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -30,7 +31,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { addCar, processCarImageWithAI } from "@/actions/cars";
-// import useFetch from "@/hooks/use-fetch";
+import useFetch from "@/hooks/use-fetch";
 import Image from "next/image";
 
 // Predefined options
@@ -104,6 +105,125 @@ const AddCarForm = () => {
     },
   });
 
+  const {
+    data: addCarResult,
+    loading: addCarLoading,
+    fn: addCarFn,
+  } = useFetch(addCar);
+
+  const {
+    loading: processImageLoading,
+    fn: processImageFn,
+    data: processImageResult,
+    error: processImageError,
+  } = useFetch(processCarImageWithAI);
+
+ const processWithAI = async () => {
+    if (!uploadedAiImage) {
+      toast.error("Please upload an image first");
+      return;
+    }
+
+    await processImageFn(uploadedAiImage);
+  };
+
+
+  useEffect(() => {
+    if (addCarResult?.success) {
+      toast.success("Car added successfully");
+      router.push("/admin/cars");
+    }
+  }, [addCarResult, addCarLoading]);
+  useEffect(() => {
+    if (processImageError) {
+      toast.error(processImageError.message || "Failed to upload car");
+    }
+  }, [processImageError]);
+
+   // Handle successful AI processing
+  useEffect(() => {
+    if (processImageResult?.success) {
+      const carDetails = processImageResult.data;
+
+      // Update form with AI results
+      setValue("make", carDetails.make);
+      setValue("model", carDetails.model);
+      setValue("year", carDetails.year.toString());
+      setValue("color", carDetails.color);
+      setValue("bodyType", carDetails.bodyType);
+      setValue("fuelType", carDetails.fuelType);
+      setValue("price", carDetails.price);
+      setValue("mileage", carDetails.mileage);
+      setValue("transmission", carDetails.transmission);
+      setValue("description", carDetails.description);
+
+      // Add the image to the uploaded images
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setUploadedImages((prev) => [...prev, e.target.result]);
+      };
+      reader.readAsDataURL(uploadedAiImage);
+
+      toast.success("Successfully extracted car details", {
+        description: `Detected ${carDetails.year} ${carDetails.make} ${
+          carDetails.model
+        } with ${Math.round(carDetails.confidence * 100)}% confidence`,
+      });
+
+      // Switch to manual tab for the user to review and fill in missing details
+      setActiveTab("manual");
+    }
+  }, [processImageResult, setValue, uploadedAiImage]);
+
+ 
+
+  
+
+  const onAiDrop = useCallback((acceptedFiles) => {
+    const file = acceptedFiles[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image size should be less than 5MB");
+      return;
+    }
+
+    setUploadedAiImage(file);
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setImagePreview(e.target.result);
+    };
+    reader.readAsDataURL(file);
+  }, []);
+
+  const { getRootProps: getAiRootProps, getInputProps: getAiInputProps } =
+    useDropzone({
+      onDrop: onAiDrop,
+      accept: {
+        "image/*": [".jpeg", ".jpg", ".png", ".webp"],
+      },
+      maxFiles: 1,
+      multiple: false,
+    });
+
+  const onSubmit = async (data) => {
+    if (uploadedImages.length === 0) {
+      setImageError("please upload at least one image ");
+      return;
+    }
+    const carData = {
+      ...data,
+      year: parseInt(data.year),
+      price: parseFloat(data.price),
+      mileage: parseInt(data.mileage),
+      seats: data.seats ? parseInt(data.seats) : null,
+    };
+    await addCarFn({
+      carData,
+      images: uploadedImages,
+    });
+  };
 
   const onMultiImagesDrop = useCallback((acceptedFiles) => {
     const validFiles = acceptedFiles.filter((file) => {
@@ -148,8 +268,7 @@ const AddCarForm = () => {
     }, 200);
   }, []);
 
-
-   const {
+  const {
     getRootProps: getMultiImageRootProps,
     getInputProps: getMultiImageInputProps,
   } = useDropzone({
@@ -159,6 +278,11 @@ const AddCarForm = () => {
     },
     multiple: true,
   });
+
+  // Remove image from upload preview
+  const removeImage = (index) => {
+    setUploadedImages((prev) => prev.filter((_, i) => i !== index));
+  };
 
   return (
     <div>
@@ -182,7 +306,7 @@ const AddCarForm = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleSubmit()} className="space-y-6">
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {/* Make */}
                   <div className="space-y-2">
@@ -503,7 +627,7 @@ const AddCarForm = () => {
                   )}
                 </div>
 
-                {/* <Button
+                <Button
                   type="submit"
                   className="w-full md:w-auto"
                   disabled={addCarLoading}
@@ -516,7 +640,7 @@ const AddCarForm = () => {
                   ) : (
                     "Add Car"
                   )}
-                </Button> */}
+                </Button>
               </form>
             </CardContent>
           </Card>
@@ -530,7 +654,7 @@ const AddCarForm = () => {
                 Upload an image of a car and let Gemini AI extract its details.
               </CardDescription>
             </CardHeader>
-            {/* <CardContent>
+            <CardContent>
               <div className="space-y-6">
                 <div className="border-2 border-dashed rounded-lg p-6 text-center">
                   {imagePreview ? (
@@ -624,7 +748,7 @@ const AddCarForm = () => {
                   </ul>
                 </div>
               </div>
-            </CardContent> */}
+            </CardContent>
           </Card>
         </TabsContent>
       </Tabs>
