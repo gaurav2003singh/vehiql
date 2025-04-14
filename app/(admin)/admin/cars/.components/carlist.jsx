@@ -1,6 +1,6 @@
 "use client";
 
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
@@ -210,14 +210,19 @@ const CarList = () => {
                   {carsData.data.map((car) => (
                     <TableRow key={car.id}>
                       <TableCell>
-                        <div className="w-10 h-10 rounded-md overflow-hidden">
+                        <div className="w-15 h-10 rounded-md overflow-hidden ">
+                         
                           {car.images && car.images.length > 0 ? (
                             <Image
-                              src={car.images[0]}
+                              src={  car.images?.[0]
+                                ? car.images[0].url.startsWith("/")
+                                  ? car.images[0].url
+                                  : "/" + car.images[0].url
+                                : "/3.jpg"}
                               alt={`${car.make} ${car.model}`}
                               height={40}
                               width={40}
-                              className="w-full h-full object-cover"
+                              className="w-full h-full object-cover overflow-hidden"
                               priority
                             />
                           ) : (

@@ -27,6 +27,9 @@ export async function getFeaturedCars(limit = 3) {
       },
       take: limit,
       orderBy: { createdAt: "desc" },
+      include:{
+        images:true,
+      },
     });
 
     return cars.map(serializeCarData);

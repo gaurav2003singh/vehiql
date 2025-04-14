@@ -7,7 +7,7 @@ import { CarIcon, Heart } from "lucide-react";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import { useRouter } from "next/navigation";
-import { featuredCars } from "@/lib/data";
+
 
 export const CarCard = ({ car }) => {
   const [isSaved, setIsSaved] = useState(car.wishlisted);
@@ -17,9 +17,15 @@ export const CarCard = ({ car }) => {
     <Card className="overflow-hidden  hover:shadow-lg transition group">
       <div className="relative h-48">
         {car.images && car.images.length > 0 ? (
-          <div className="relative w-full h-full">
+          <div className="relative w-full h-full ">
             <Image
-              src={car.images[0]}
+              src={
+                car.images?.[0]?.url
+                  ? car.images[0].url.startsWith("/")
+                    ? car.images[0].url
+                    : "/" + car.images[0].url
+                  : ""
+              }
               alt={`${car.make} ${car.model}`}
               fill
               className="object-cover group-hover:scale-105 transition duration-300"
@@ -46,11 +52,11 @@ export const CarCard = ({ car }) => {
       </div>
 
       <CardContent className="p-4">
-        <div className="flex flex-col mb-2">
-          <h3 className="text-lg font-bold line-clamp-1">
-            {car.make}
-            {car.model}
-          </h3>
+        <div className="flex flex-col mb-2 ">
+          <div className="flex flex-row gap-2">
+            <h3 className="text-lg font-bold line-clamp-1 ">{car.make}</h3>
+            <h3 className="text-lg font-bold line-clamp-1 ">{car.model}</h3>
+          </div>
           <span className="text-xl font-bold text-blue-600">
             ${car.price.toLocaleString("hi-IN")}
           </span>

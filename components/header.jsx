@@ -49,7 +49,7 @@ const Header = async ({ isAdminPage = false }) => {
                     </Button>
                   </Link>
                 ) : (
-                  <Link href="/Admin">
+                  <Link href="/admin">
                     <Button variant="outline">
                       <Layout size={18} />
                       <span className="hidden md:inline">Admin Portal</span>

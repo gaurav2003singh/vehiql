@@ -220,6 +220,9 @@ export async function getCars(search = "") {
     const cars = await db.car.findMany({
       where,
       orderBy: { createdAt: "desc" },
+      include:{
+        images:true,
+      },
     });
 
     const serializedCars = cars.map(serializeCarData);
