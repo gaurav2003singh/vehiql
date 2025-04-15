@@ -3,7 +3,7 @@ import React from "react";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Car, Calendar, Cog, LogOut } from "lucide-react";
+import {LayoutDashboard,  Car, Calendar, Cog, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SignOutButton } from "@clerk/nextjs";
 

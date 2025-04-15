@@ -21,9 +21,9 @@ const Header = async ({ isAdminPage = false }) => {
               height={60}
               className="h-12 w-auto object-contain"
             />
-            {isAdminPage && (
+            {/* {isAdminPage && (
               <span className="text-xs font-extralight">admin</span>
-            )}
+            )} */}
           </Link>
           <div className="flex items-center space-x-4">
             {isAdminPage ? (

@@ -24,19 +24,19 @@ export async function generateMetadata({ params }) {
   };
 }
 
-// export default async function CarDetailsPage({ params }) {
-//   // Fetch car details
-//   const { id } = await params;
-//   const result = await getCarById(id);
+export default async function CarDetailsPage({ params }) {
+  // Fetch car details
+  const { id } = await params;
+  const result = await getCarById(id);
 
-//   // If car not found, show 404
-//   if (!result.success) {
-//     notFound();
-//   }
+  // If car not found, show 404
+  if (!result.success) {
+    notFound();
+  }
 
-//   return (
-//     <div className="container mx-auto px-4 py-12">
-//       <CarDetails car={result.data} testDriveInfo={result.data.testDriveInfo} />
-//     </div>
-//   );
-// }
+  return (
+    <div className="container mx-auto px-4 py-12">
+      <CarDetails car={result.data} testDriveInfo={result.data.testDriveInfo} />
+    </div>
+  );
+}
