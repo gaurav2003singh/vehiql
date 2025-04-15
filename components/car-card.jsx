@@ -1,21 +1,62 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Card, CardContent } from "./ui/card";
 import Image from "next/image";
 import { CarIcon, Heart } from "lucide-react";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import { useRouter } from "next/navigation";
-
+import useFetch from "@/hooks/use-fetch";
+import { toggleSavedCar } from "@/actions/car-listing";
+import { useAuth } from "@clerk/nextjs";
+import { toast } from "sonner";
 
 export const CarCard = ({ car }) => {
   const [isSaved, setIsSaved] = useState(car.wishlisted);
   const router = useRouter();
-  const handleToggleSave = async (e) => {};
+  const { isSignedIn } = useAuth();
+
+  const {
+    loading: isToggling,
+    fn: toggleSavedCarFn,
+    data: toggleResult,
+    error: toggleError,
+  } = useFetch(toggleSavedCar);
+
+  // Handle toggle result with useEffect
+  useEffect(() => {
+    if (toggleResult?.success && toggleResult.saved !== isSaved) {
+      setIsSaved(toggleResult.saved);
+      toast.success(toggleResult.message);
+    }
+  }, [toggleResult, isSaved]);
+
+  // Handle errors with useEffect
+  useEffect(() => {
+    if (toggleError) {
+      toast.error("Failed to update favorites");
+    }
+  }, [toggleError]);
+
+  const handleToggleSave = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!isSignedIn) {
+      toast.error("Please sign in to save cars");
+      router.push("/sign-in");
+      return;
+    }
+
+    if (isToggling) return;
+
+    // Call the toggleSavedCar function using our useFetch hook
+    await toggleSavedCarFn(car.id);
+  };
   return (
     <Card className="overflow-hidden  hover:shadow-lg transition group">
-      <div className="relative h-48">
+      <div className="relative w-full aspect-[4/3] ">
         {car.images && car.images.length > 0 ? (
           <div className="relative w-full h-full ">
             <Image
@@ -64,9 +105,9 @@ export const CarCard = ({ car }) => {
 
         <div className="text-gray-600 mb-2 flex items-center">
           <span>{car.year}</span>
-          <span className="mx-2">.</span>
+          <span className="mx-1">.</span>
           <span>{car.transmission}</span>
-          <span className="mx-2">.</span>
+          <span className="mx-1">.</span>
           <span>{car.fuelType}</span>
         </div>
 

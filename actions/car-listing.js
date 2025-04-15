@@ -152,6 +152,9 @@ export async function getCars({
       take: limit,
       skip,
       orderBy,
+      include: {
+        images: true, // ✅ this fetches image URLs
+      },
     });
 
     // If we have a user, check which cars are wishlisted
@@ -388,6 +391,9 @@ export async function getSavedCars() {
         car: true,
       },
       orderBy: { savedAt: "desc" },
+      include: {
+        images: true, // ✅ this fetches image URLs
+      },
     });
 
     // Extract and format car data
