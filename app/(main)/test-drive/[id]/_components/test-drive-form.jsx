@@ -39,7 +39,6 @@ import { cn } from "@/lib/utils";
 import { bookTestDrive } from "@/actions/test-drive";
 import { toast } from "sonner";
 import useFetch from "@/hooks/use-fetch";
-import Image from "next/image";
 
 // Define Zod schema for form validation
 const testDriveSchema = z.object({
@@ -227,7 +226,7 @@ export function TestDriveForm({ car, testDriveInfo }) {
             <div className="aspect-video rounded-lg overflow-hidden relative mb-4">
               {car.images && car.images.length > 0 ? (
                 <img
-                  src={car.images[0]}
+                  src={car.images[0].url}
                   alt={`${car.year} ${car.make} ${car.model}`}
                   className="object-cover w-full h-full"
                 />

@@ -109,8 +109,13 @@ export async function getUserTestDrives() {
     const bookings = await db.testDriveBooking.findMany({
       where: { userId: user.id },
       include: {
-        car: true,
+        car: {
+          include: {
+           images: true,
+          },
+        }
       },
+     
       orderBy: { bookingDate: "desc" },
     });
 
