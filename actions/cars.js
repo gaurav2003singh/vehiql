@@ -249,8 +249,11 @@ export async function deleteCar(id) {
 
     // Step 1: Get the car and its image URLs
     const car = await db.car.findUnique({
-      where: { id },
-      select: { images: true },
+      where: { id:carId },
+      include:{
+        images:true,
+      }
+      // select: { images: true },
     });
 
     if (!car) {

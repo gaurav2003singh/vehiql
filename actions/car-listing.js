@@ -387,12 +387,14 @@ export async function getSavedCars() {
     // Get saved cars with their details
     const savedCars = await db.userSavedCar.findMany({
       where: { userId: user.id },
-      include: {
-        car: true,
-      },
       orderBy: { savedAt: "desc" },
       include: {
-        images: true, // ✅ this fetches image URLs
+        car: {
+          include: {
+            images: true, // Include car images
+          },
+        },
+       
       },
     });
 
