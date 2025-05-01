@@ -67,7 +67,7 @@ model CarImage {
   id        String   @id @default(uuid())
   carId     String
   car       Car      @relation(fields: [carId], references: [id], onDelete: Cascade)
-  url       String // Supabase storage URL
+  url       String 
   createdAt DateTime @default(now())
 
   @@index([carId])

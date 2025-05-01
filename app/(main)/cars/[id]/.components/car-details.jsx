@@ -34,6 +34,7 @@ import {
 import EmiCalculator from "./emi-calculator";
 
 export function CarDetails({ car, testDriveInfo }) {
+  console.log("car.images = ", car.images);
   const router = useRouter();
   const { isSignedIn } = useAuth();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -60,6 +61,10 @@ export function CarDetails({ car, testDriveInfo }) {
       toast.error("Failed to update favorites");
     }
   }, [toggleError]);
+
+  // useEffect(() => {
+  //   console.log("Images array:", car.images);
+  // }, [car.images]);
 
   // Handle save car
   const handleSaveCar = async () => {
@@ -129,9 +134,9 @@ export function CarDetails({ car, testDriveInfo }) {
             )}
           </div>
 
-          {/* Thumbnails */}
-          {car.images && car.images.length > 1 && (
-            <div className="flex gap-2 overflow-x-auto pb-2">
+          {/* Thumbnails */} 
+           {car.images && car.images.length > 1 && (
+            <div className="flex gap-2 overflow-x-auto pb-2 ">
               {car.images.map((image, index) => (
                 <div
                   key={index}
@@ -143,7 +148,7 @@ export function CarDetails({ car, testDriveInfo }) {
                   onClick={() => setCurrentImageIndex(index)}
                 >
                   <Image
-                    src={image}
+                    src={image.url}
                     alt={`${car.year} ${car.make} ${car.model} - view ${
                       index + 1
                     }`}

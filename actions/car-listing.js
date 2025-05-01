@@ -274,12 +274,16 @@ export async function getCarById(carId) {
     if (userId) {
       dbUser = await db.user.findUnique({
         where: { clerkUserId: userId },
+       
       });
     }
 
     // Get car details
     const car = await db.car.findUnique({
       where: { id: carId },
+      include:{
+        images:true,
+      },
     });
 
     if (!car) {
