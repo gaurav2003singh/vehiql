@@ -8,6 +8,7 @@ import { promises as fs } from "fs";
 import path from "path";
 import { auth } from "@clerk/nextjs/server";
 import { serializeCarData } from "@/lib/helper";
+import { url } from "inspector";
 
 // Function to convert File to base64
 async function fileToBase64(file) {
@@ -164,7 +165,7 @@ export async function addCar({ carData, images }) {
       imageUrls.push(relativePath); // store relative URL for use in frontend
     }
 
-    if (imageUrls.length === 0) throw new Error("No valid images uploaded");
+    if (imageUrls.length < 3) throw new Error("At least 3 images required");
 
     const car = await db.car.create({
       data: {
@@ -182,15 +183,18 @@ export async function addCar({ carData, images }) {
         description: carData.description,
         status: carData.status,
         featured: carData.featured,
+        images:{
+          create:imageUrls.map((url)=>({url})),
+        },
       },
     });
 
-    await db.carImage.createMany({
-      data: imageUrls.map((url) => ({
-        carId: car.id,
-        url,
-      })),
-    });
+    // await db.carImage.createMany({
+    //   data: imageUrls.map((url) => ({
+    //     carId: car.id,
+    //     url,
+    //   })),
+    // });
 
     revalidatePath("/admin/cars");
 
@@ -208,7 +212,9 @@ export async function getCars(search = "") {
     let where = {};
 
     // Add search filter
-    if (search) {
+   
+
+    if (typeof search === "string" && search.trim() !== "") {
       where.OR = [
         { make: { contains: search, mode: "insensitive" } },
         { model: { contains: search, mode: "insensitive" } },

@@ -100,30 +100,46 @@ export async function getCars({
     // Build where conditions
     let where = {
       status: "AVAILABLE",
+      AND: [],
     };
 
     if (search) {
-      where.OR = [
+      where.AND.push({ 
+        OR: [
         { make: { contains: search, mode: "insensitive" } },
         { model: { contains: search, mode: "insensitive" } },
         { description: { contains: search, mode: "insensitive" } },
-      ];
+      ],});
     }
 
-    if (make) where.make = { equals: make, mode: "insensitive" };
-    if (bodyType) where.bodyType = { equals: bodyType, mode: "insensitive" };
-    if (fuelType) where.fuelType = { equals: fuelType, mode: "insensitive" };
-    if (transmission)
-      where.transmission = { equals: transmission, mode: "insensitive" };
-
-    // Add price range
-    where.price = {
-      gte: parseFloat(minPrice) || 0,
-    };
-
-    if (maxPrice && maxPrice < Number.MAX_SAFE_INTEGER) {
-      where.price.lte = parseFloat(maxPrice);
+    if (make) {
+      where.AND.push({ make: { contains: make, mode: "insensitive" } });
     }
+    if (bodyType) {
+      where.AND.push({ bodyType: { contains: bodyType, mode: "insensitive" } });
+    }
+    if (fuelType) {
+      where.AND.push({ fuelType: { contains: fuelType, mode: "insensitive" } });
+    }
+    if (transmission) {
+      where.AND.push({ transmission: { contains: transmission, mode: "insensitive" } });
+    }
+    
+    // Price filter
+    const min = parseFloat(minPrice);
+    const max = parseFloat(maxPrice);
+    
+    let priceFilter = { gte: !isNaN(min) ? min : 0 };
+    if (!isNaN(max) && max < Number.MAX_SAFE_INTEGER) {
+      priceFilter.lte = max;
+    }
+    
+    where.AND.push({ price: priceFilter });
+    
+
+   
+   
+    
 
     // Calculate pagination
     const skip = (page - 1) * limit;
@@ -144,6 +160,7 @@ export async function getCars({
     }
 
     // Get total count for pagination
+   
     const totalCars = await db.car.count({ where });
 
     // Execute the main query
