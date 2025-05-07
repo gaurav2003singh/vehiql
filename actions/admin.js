@@ -68,11 +68,11 @@ export async function getAdminTestDrives({ search = "", status = "" }) {
     const bookings = await db.testDriveBooking.findMany({
       where,
       include: {
-        car:{
-            include:{
-                images:true,
-            },
-        } ,
+        car: {
+          include: {
+            images: true,
+          },
+        },
         user: {
           select: {
             id: true,
@@ -80,7 +80,6 @@ export async function getAdminTestDrives({ search = "", status = "" }) {
             email: true,
             imageUrl: true,
             phone: true,
-           
           },
         },
       },
@@ -136,8 +135,6 @@ export async function updateTestDriveStatus(bookingId, newStatus) {
     // Get the booking
     const booking = await db.testDriveBooking.findUnique({
       where: { id: bookingId },
-      
-
     });
 
     if (!booking) {
