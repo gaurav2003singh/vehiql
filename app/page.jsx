@@ -47,7 +47,7 @@ export default async function Home() {
             </Button>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 grid-rows-2 gap-6">
             {featuredCars.map((car) => {
               return <CarCard key={car.id} car={car} />;
             })}
@@ -182,7 +182,7 @@ export default async function Home() {
           </Accordion>
         </div>
       </section>
-      <section className="py-16 dotted-background text-white">
+      <section className="py-16 mb-0.5 dotted-background text-white">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold mb-4">
             Ready to Find Your Dream Car?
@@ -193,7 +193,7 @@ export default async function Home() {
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Button size="lg" variant="secondary" asChild>
-              <Link href="/Cars">View All Cars</Link>
+              <Link href="/cars">View All Cars</Link>
             </Button>
             <SignedOut>
               <Button size="lg" asChild>

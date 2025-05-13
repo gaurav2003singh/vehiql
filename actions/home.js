@@ -18,7 +18,7 @@ function serializeCarData(car) {
 /**
  * Get featured cars for the homepage
  */
-export async function getFeaturedCars(limit = 3) {
+export async function getFeaturedCars(limit = 6) {
   try {
     const cars = await db.car.findMany({
       where: {

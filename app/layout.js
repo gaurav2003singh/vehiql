@@ -4,6 +4,8 @@ import { ClerkProvider } from "@clerk/nextjs";
 import Header from "@/components/header.jsx";
 import { Toaster } from "@/components/ui/sonner";
 
+import FooterPage from "@/components/footer";
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
@@ -15,16 +17,11 @@ export default function RootLayout({ children }) {
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className={`${inter.className}`}
-        >
+        <body className={`${inter.className}`}>
           <Header />
-          <main className="min-h-screen">{children}</main>
+          <main className="">{children}</main>
           <Toaster richColors />
-          <footer className="bg-blue-100 py-12">
-            <div className="container mx-auto px-4 text-center text-gray-600">
-              <p className="text-2xl">Made with  Gaurav Singh</p>
-            </div>
-          </footer>
+          <FooterPage />
         </body>
       </html>
     </ClerkProvider>

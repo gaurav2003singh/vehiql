@@ -43,7 +43,7 @@ const Header = async ({ isAdminPage = false }) => {
                 </Link>
                 {!isAdmin ? (
                   <Link href="/reservations">
-                    <Button variant="outline">
+                    <Button>
                       <CarFront size={18} />
                       <span className="hidden md:inline">My Reservations</span>
                     </Button>
