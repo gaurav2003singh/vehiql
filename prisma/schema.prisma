@@ -38,7 +38,7 @@ model Car {
   transmission      String
   bodyType          String
   seats             Int?
-  description       String
+  description       String?
   status            CarStatus          @default(AVAILABLE)
   featured          Boolean            @default(false)
   images            CarImage[]
