@@ -1,9 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-
-  // experimental: {
-  //   turbo: false, // 👈 This disables Turbopack
-  // },
+  images: {
+    domains: ["imgd.aeplcdn.com"],
+  },
   async headers() {
     return [
       {

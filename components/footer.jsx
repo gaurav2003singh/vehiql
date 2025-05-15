@@ -5,12 +5,12 @@ import React from "react";
 function FooterPage() {
   return (
     <div className=" flex flex-col">
-      <footer className="bg-gray-900 text-white py-8">
+      <footer className="bg-gray-900 text-white py-8 border-2 rounded-2xl ">
         <div className="max-w-6xl mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             {/* Company Info */}
-            <div>
-              <h3 className="text-xl font-bold mb-4">Car Marketplace</h3>
+            <div className="ml-2.5">
+              <h3 className="text-xl font-bold mb-4 ">Car Marketplace</h3>
               <p className="text-gray-400">
                 Your trusted destination for buying and selling quality
                 vehicles.
@@ -18,7 +18,7 @@ function FooterPage() {
             </div>
 
             {/* Quick Links */}
-            <div>
+            <div className="ml-4">
               <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
               <ul className="space-y-2">
                 <li>
@@ -27,7 +27,7 @@ function FooterPage() {
                   </a>
                 </li>
                 <li>
-                  <a href="/" className="text-gray-400 hover:text-white">
+                  <a href="/cars" className="text-gray-400 hover:text-white">
                     Browse Cars
                   </a>
                 </li>
@@ -55,7 +55,7 @@ function FooterPage() {
             </div>
 
             {/* Social Media */}
-            <div>
+            <div className="ml-6">
               <h3 className="text-lg font-semibold mb-4">Follow Us</h3>
               <div className="flex space-x-4">
                 <a href="#" className="text-gray-400 hover:text-white">

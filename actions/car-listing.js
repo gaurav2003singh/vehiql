@@ -104,42 +104,40 @@ export async function getCars({
     };
 
     if (search) {
-      where.AND.push({ 
+      where.AND.push({
         OR: [
-        { make: { contains: search, mode: "insensitive" } },
-        { model: { contains: search, mode: "insensitive" } },
-        { description: { contains: search, mode: "insensitive" } },
-      ],});
+          { make: { contains: search  } },
+          { model: { contains: search  } },
+          { description: { contains: search  } },
+        ],
+      });
     }
 
     if (make) {
-      where.AND.push({ make: { contains: make, mode: "insensitive" } });
+      where.AND.push({ make: { contains: make  } });
     }
     if (bodyType) {
-      where.AND.push({ bodyType: { contains: bodyType, mode: "insensitive" } });
+      where.AND.push({ bodyType: { contains: bodyType  } });
     }
     if (fuelType) {
-      where.AND.push({ fuelType: { contains: fuelType, mode: "insensitive" } });
+      where.AND.push({ fuelType: { contains: fuelType  } });
     }
     if (transmission) {
-      where.AND.push({ transmission: { contains: transmission, mode: "insensitive" } });
+      where.AND.push({
+        transmission: { contains: transmission  },
+      });
     }
-    
+
     // Price filter
     const min = parseFloat(minPrice);
     const max = parseFloat(maxPrice);
-    
+
     let priceFilter = { gte: !isNaN(min) ? min : 0 };
     if (!isNaN(max) && max < Number.MAX_SAFE_INTEGER) {
       priceFilter.lte = max;
     }
-    
-    where.AND.push({ price: priceFilter });
-    
 
-   
-   
-    
+    where.AND.push({ price: priceFilter });
 
     // Calculate pagination
     const skip = (page - 1) * limit;
@@ -160,8 +158,12 @@ export async function getCars({
     }
 
     // Get total count for pagination
-   
-    const totalCars = await db.car.count({ where });
+
+    const totalCars = await db.car.count({
+      where
+    });
+
+
 
     // Execute the main query
     const cars = await db.car.findMany({
@@ -291,15 +293,14 @@ export async function getCarById(carId) {
     if (userId) {
       dbUser = await db.user.findUnique({
         where: { clerkUserId: userId },
-       
       });
     }
 
     // Get car details
     const car = await db.car.findUnique({
       where: { id: carId },
-      include:{
-        images:true,
+      include: {
+        images: true,
       },
     });
 
@@ -415,7 +416,6 @@ export async function getSavedCars() {
             images: true, // Include car images
           },
         },
-       
       },
     });
 
