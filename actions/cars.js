@@ -183,8 +183,8 @@ export async function addCar({ carData, images }) {
         description: carData.description,
         status: carData.status,
         featured: carData.featured,
-        images:{
-          create:imageUrls.map((url)=>({url})),
+        images: {
+          create: imageUrls.map((url) => ({ url })),
         },
       },
     });
@@ -208,17 +208,15 @@ export async function addCar({ carData, images }) {
 // Fetch all cars with simple search
 export async function getCars(search = "") {
   try {
-    // Build where conditions
     let where = {};
 
     // Add search filter
-   
 
     if (typeof search === "string" && search.trim() !== "") {
       where.OR = [
-        { make: { contains: search, mode: "insensitive" } },
-        { model: { contains: search, mode: "insensitive" } },
-        { color: { contains: search, mode: "insensitive" } },
+        { make: { contains: search } },
+        { model: { contains: search } },
+        { color: { contains: search } },
       ];
     }
 
@@ -226,8 +224,8 @@ export async function getCars(search = "") {
     const cars = await db.car.findMany({
       where,
       orderBy: { createdAt: "desc" },
-      include:{
-        images:true,
+      include: {
+        images: true,
       },
     });
 
@@ -255,10 +253,10 @@ export async function deleteCar(id) {
 
     // Step 1: Get the car and its image URLs
     const car = await db.car.findUnique({
-      where: { id:carId },
-      include:{
-        images:true,
-      }
+      where: { id },
+      include: {
+        images: true,
+      },
       // select: { images: true },
     });
 

@@ -8,6 +8,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
+import NavigateButton from "@/components/ui/navigateButton";
 import { bodyTypes, carMakes, faqItems } from "@/lib/data";
 import { SignedOut } from "@clerk/nextjs";
 import { Calendar, Car, ChevronRight, Shield } from "lucide-react";
@@ -82,6 +83,7 @@ export default async function Home() {
                     style={{ objectFit: "contain" }}
                   />
                 </div>
+
                 <h3 className="font-medium">{make.name}</h3>
               </Link>
             ))}

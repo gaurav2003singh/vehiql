@@ -5,6 +5,7 @@ import Header from "@/components/header.jsx";
 import { Toaster } from "@/components/ui/sonner";
 
 import FooterPage from "@/components/footer";
+import GlobalSpinner from "@/components/GlobalSpinner";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,6 +19,7 @@ export default function RootLayout({ children }) {
     <ClerkProvider>
       <html lang="en">
         <body className={`${inter.className}`}>
+          <GlobalSpinner/>
           <Header />
           <main className="">{children}</main>
           <Toaster richColors />

@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { Card, CardContent } from "./ui/card";
 import Image from "next/image";
-import { CarIcon, Heart } from "lucide-react";
+import { CarIcon, Heart, Loader2 } from "lucide-react";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
 import { useRouter } from "next/navigation";
@@ -11,6 +11,7 @@ import useFetch from "@/hooks/use-fetch";
 import { toggleSavedCar } from "@/actions/car-listing";
 import { useAuth } from "@clerk/nextjs";
 import { toast } from "sonner";
+import NavigateButton from "./ui/navigateButton";
 
 export const CarCard = ({ car }) => {
   const [isSaved, setIsSaved] = useState(car.wishlisted);
@@ -55,7 +56,7 @@ export const CarCard = ({ car }) => {
     await toggleSavedCarFn(car.id);
   };
   return (
-    <Card className="overflow-hidden  hover:shadow-lg transition group">
+    <Card className="overflow-hidden  hover:shadow-lg transition group"   onClick={() => router.push(`/cars/${car.id}`)}>
       <div className="relative w-full aspect-[4/3] ">
         {car.images && car.images.length > 0 ? (
           <div className="relative w-full h-full ">
@@ -123,12 +124,17 @@ export const CarCard = ({ car }) => {
           </Badge>
         </div>
         <div className="flex justify-between">
-          <Button
+          {/* <Button
             className="flex-1"
             onClick={() => router.push(`/cars/${car.id}`)}
+            
           >
+           
             View Car
-          </Button>
+          </Button> */}
+          <NavigateButton href={`/cars/${car.id}`} className="flex-1">
+            View Car
+          </NavigateButton>
         </div>
       </CardContent>
     </Card>

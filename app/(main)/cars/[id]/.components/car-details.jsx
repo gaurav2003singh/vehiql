@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useAuth } from "@clerk/nextjs";
 import { AlertCircle, Calendar } from "lucide-react";
+
 import {
   Car,
   Fuel,
@@ -134,8 +135,8 @@ export function CarDetails({ car, testDriveInfo }) {
             )}
           </div>
 
-          {/* Thumbnails */} 
-           {car.images && car.images.length > 1 && (
+          {/* Thumbnails */}
+          {car.images && car.images.length > 1 && (
             <div className="flex gap-2 overflow-x-auto pb-2 ">
               {car.images.map((image, index) => (
                 <div

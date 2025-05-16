@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect } from "react";
@@ -10,14 +9,16 @@ import { useDropzone } from "react-dropzone";
 import { useRouter } from "next/navigation";
 import { processImageSearch } from "@/actions/home";
 import useFetch from "@/hooks/use-fetch";
+import useSuggestions from "@/hooks/useSuggestions";
 
-export const HomeSearch = () =>{
+export const HomeSearch = () => {
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
   const [searchImage, setSearchImage] = useState(null);
   const [imagePreview, setImagePreview] = useState("");
   const [isUploading, setIsUploading] = useState(false);
   const [isImageSearchActive, setIsImageSearchActive] = useState(false);
+  const suggestions = useSuggestions(searchTerm);
 
   // Use the useFetch hook for image processing
   const {
@@ -113,7 +114,7 @@ export const HomeSearch = () =>{
   return (
     <div>
       <form onSubmit={handleTextSearch}>
-        <div className="relative flex items-center">
+        <div className="  relative flex items-center">
           <Search className="absolute left-3 w-5 h-5" />
           <Input
             type="text"
@@ -122,6 +123,19 @@ export const HomeSearch = () =>{
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10 pr-12 py-6 w-full rounded-full border-gray-300 bg-white/95 backdrop-blur-sm"
           />
+          {suggestions.length > 0 && (
+            <ul className="absolute z-50 bg-blue-950 border rounded-md shadow-md mt-32 ml-52  w-lg max-h-60 overflow-y-auto">
+              {suggestions.map((item, i) => (
+                <li
+                  key={i}
+                  onClick={() => setSearchTerm(item)}
+                  className="px-4 py-2 cursor-pointer hover:bg-blue-900"
+                >
+                  {item}
+                </li>
+              ))}
+            </ul>
+          )}
 
           {/* Image Search Button */}
           <div className="absolute right-[100px]">
@@ -203,4 +217,4 @@ export const HomeSearch = () =>{
       )}
     </div>
   );
-}
+};

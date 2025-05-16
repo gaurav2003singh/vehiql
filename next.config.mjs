@@ -1,8 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  images: {
-    domains: ["imgd.aeplcdn.com"],
-  },
   async headers() {
     return [
       {
