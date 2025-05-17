@@ -183,8 +183,13 @@ export async function cancelTestDrive(bookingId) {
       };
     }
 
+    console.log("User ID:", user.id);
+console.log("Booking User ID:", booking.userId);
+console.log("User Role:", user.role);
+
+
     // Check if user owns this booking
-    if (booking.userId !== user.id || user.role !== "ADMIN") {
+    if (booking.userId !== user.id && user.role !== "ADMIN") {
       return {
         success: false,
         error: "Unauthorized to cancel this booking",
@@ -207,10 +212,11 @@ export async function cancelTestDrive(bookingId) {
     }
 
     // Update the booking status
-    await db.testDriveBooking.update({
+     const updated = await db.testDriveBooking.update({
       where: { id: bookingId },
       data: { status: "CANCELLED" },
     });
+    console.log("update booking:", updated);
 
     // Revalidate paths
     revalidatePath("/reservations");

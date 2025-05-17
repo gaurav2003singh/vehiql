@@ -56,7 +56,10 @@ export const CarCard = ({ car }) => {
     await toggleSavedCarFn(car.id);
   };
   return (
-    <Card className="overflow-hidden  hover:shadow-lg transition group"   onClick={() => router.push(`/cars/${car.id}`)}>
+    <Card
+      className="overflow-hidden  hover:shadow-lg transition group"
+      onClick={() => router.push(`/cars/${car.id}`)}
+    >
       <div className="relative w-full aspect-[4/3] ">
         {car.images && car.images.length > 0 ? (
           <div className="relative w-full h-full ">

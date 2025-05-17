@@ -5,12 +5,12 @@ import React from "react";
 function FooterPage() {
   return (
     <div className=" flex flex-col">
-      <footer className="bg-gray-900 text-white py-8 border-2 rounded-2xl ">
+      <footer className=" dotted-background text-white py-8  ">
         <div className="max-w-6xl mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             {/* Company Info */}
             <div className="ml-2.5">
-              <h3 className="text-xl font-bold mb-4 ">Car Marketplace</h3>
+              <h3 className="text-lg font-bold mb-4 ">Car Marketplace</h3>
               <p className="text-gray-400">
                 Your trusted destination for buying and selling quality
                 vehicles.
