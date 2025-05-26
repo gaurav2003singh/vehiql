@@ -31,11 +31,7 @@ function FooterPage() {
                     Browse Cars
                   </a>
                 </li>
-                <li>
-                  <a href="/sell" className="text-gray-400 hover:text-white">
-                    Sell Your Car
-                  </a>
-                </li>
+               
                 <li>
                   <a href="/about" className="text-gray-400 hover:text-white">
                     About Us
