@@ -80,8 +80,7 @@ export async function bookTestDrive({
   }
 }
 
-/**
- * Get user's test drive bookings - reservations page
+/* test drive bookings - reservations page
  */
 export async function getUserTestDrives() {
   try {
@@ -183,9 +182,7 @@ export async function cancelTestDrive(bookingId) {
       };
     }
 
-    console.log("User ID:", user.id);
-console.log("Booking User ID:", booking.userId);
-console.log("User Role:", user.role);
+   
 
 
     // Check if user owns this booking
