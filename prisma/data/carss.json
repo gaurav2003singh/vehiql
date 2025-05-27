@@ -1,0 +1,97 @@
+
+
+[
+  {
+    "make": "Toyota",
+    "model": "Camry",
+    "year": 2022,
+    "price": 26500.5,
+    "mileage": 12500,
+    "color": "Silver",
+    "fuelType": "Hybrid",
+    "transmission": "Automatic",
+    "bodyType": "Sedan",
+    "seats": 5,
+    "description": "Low mileage hybrid with premium package",
+    "status": "AVAILABLE",
+    "featured": true,
+    "images": [
+    { "url":"https://picsum.photos/id/1076/800/600"},
+    { "url": "https://picsum.photos/id/133/800/600"}
+    ],
+    "createdAt": "2024-03-15T09:12:34Z",
+    "updatedAt": "2024-03-15T09:12:34Z"
+  },
+  {
+    "make": "Ford",
+    "model": "Mustang",
+    "year": 2020,
+    "price": 34999.99,
+    "mileage": 28000,
+    "color": "Red",
+    "fuelType": "Gasoline",
+    "transmission": "Manual",
+    "bodyType": "Coupe",
+    "seats": 4,
+    "description": null,
+    "status": "AVAILABLE",
+    "featured": false,
+    "images": [
+     { "url":"https://picsum.photos/id/111/800/600"},
+      {"url":"https://picsum.photos/id/137/800/600"}
+    ],
+    "createdAt": "2024-02-28T14:45:00Z",
+    "updatedAt": "2024-03-10T16:20:00Z"
+  },
+ 
+
+
+
+ 
+
+ 
+ 
+  {
+    "make": "Toyota",
+    "model": "Corolla",
+    "year": 2020,
+    "price": 15000,
+    "mileage": 30000,
+    "color": "White",
+    "fuelType": "Petrol",
+    "transmission": "Automatic",
+    "bodyType": "Sedan",
+    "seats": 5,
+    "description": "Reliable and fuel-efficient sedan, perfect for city drives.",
+    "status": "AVAILABLE",
+    "featured": true,
+    "createdAt": "2023-01-10T10:00:00Z",
+    "updatedAt": "2023-06-01T15:30:00Z",
+    "images": [
+      { "url": "https://example.com/images/corolla-front.jpg" },
+      { "url": "https://example.com/images/corolla-side.jpg" }
+    ]
+  },
+  {
+    "make": "Honda",
+    "model": "Civic",
+    "year": 2019,
+    "price": 17000,
+    "mileage": 25000,
+    "color": "Black",
+    "fuelType": "Diesel",
+    "transmission": "Manual",
+    "bodyType": "Hatchback",
+    "seats": 5,
+    "description": "Sporty and stylish hatchback with great performance.",
+    "status": "AVAILABLE",
+    "featured": false,
+    "createdAt": "2022-11-15T08:45:00Z",
+    "updatedAt": "2023-03-20T12:00:00Z",
+    "images": [
+      { "url": "https://example.com/images/civic-front.jpg" }
+    ]
+  }
+
+
+]
