@@ -18,9 +18,7 @@
     "images": [
     { "url":"https://picsum.photos/id/1076/800/600"},
     { "url": "https://picsum.photos/id/133/800/600"}
-    ],
-    "createdAt": "2024-03-15T09:12:34Z",
-    "updatedAt": "2024-03-15T09:12:34Z"
+    ]
   },
   {
     "make": "Ford",
@@ -39,12 +37,24 @@
     "images": [
      { "url":"https://picsum.photos/id/111/800/600"},
       {"url":"https://picsum.photos/id/137/800/600"}
-    ],
-    "createdAt": "2024-02-28T14:45:00Z",
-    "updatedAt": "2024-03-10T16:20:00Z"
+    ]
+   
   },
  
-
+{
+  
+    "make": "Toyota",
+    "model": "Camry",
+    "year": 2023,
+    "price": 28999,
+    "images": [{"url":"https://stimg.cardekho.com/images/carexteriorimages/930x620/Hyundai/Venue/10141/1738045593759/front-left-side-47.jpg"}],
+    "transmission": "Automatic",
+    "fuelType": "Gasoline",
+    "bodyType": "Sedan",
+    "mileage": 15000,
+    "color": "White",
+    "wishlisted": false
+  },
 
 
  
@@ -65,8 +75,7 @@
     "description": "Reliable and fuel-efficient sedan, perfect for city drives.",
     "status": "AVAILABLE",
     "featured": true,
-    "createdAt": "2023-01-10T10:00:00Z",
-    "updatedAt": "2023-06-01T15:30:00Z",
+    
     "images": [
       { "url": "https://example.com/images/corolla-front.jpg" },
       { "url": "https://example.com/images/corolla-side.jpg" }
@@ -86,8 +95,8 @@
     "description": "Sporty and stylish hatchback with great performance.",
     "status": "AVAILABLE",
     "featured": false,
-    "createdAt": "2022-11-15T08:45:00Z",
-    "updatedAt": "2023-03-20T12:00:00Z",
+  
+    
     "images": [
       { "url": "https://example.com/images/civic-front.jpg" }
     ]

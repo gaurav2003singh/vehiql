@@ -21,8 +21,8 @@ async function main() {
         description: car.description,
         status: car.status,
         featured: car.featured,
-        createdAt: new Date(car.createdAt),
-        updatedAt: new Date(car.updatedAt),
+        // createdAt: new Date(car.createdAt),
+        // updatedAt: new Date(car.updatedAt),
         images: {
           create: car.images.map((img) => ({
             url: img.url,
