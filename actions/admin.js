@@ -48,16 +48,16 @@ export async function getAdminTestDrives({ search = "", status = "" }) {
         {
           car: {
             OR: [
-              { make: { contains: search } },
-              { model: { contains: search } },
+              { make: { contains: search, mode: 'insensitive'  } },
+              { model: { contains: search, mode: 'insensitive'  } },
             ],
           },
         },
         {
           user: {
             OR: [
-              { name: { contains: search } },
-              { email: { contains: search } },
+              { name: { contains: search, mode: 'insensitive'  } },
+              { email: { contains: search, mode: 'insensitive'  } },
             ],
           },
         },

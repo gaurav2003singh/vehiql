@@ -141,20 +141,37 @@ export function TestDriveForm({ car, testDriveInfo }) {
 
     // Generate time slots (every hour)
     const slots = [];
-    for (let hour = openHour; hour < closeHour; hour++) {
-      const startTime = `${hour.toString().padStart(2, "0")}:00`;
-      const endTime = `${(hour + 1).toString().padStart(2, "0")}:00`;
+    // for (let hour = openHour; hour < closeHour; hour++) {
+    //   const startTime = `${hour.toString().padStart(2, "0")}:00`;
+    //   const endTime = `${(hour + 1).toString().padStart(2, "0")}:00`;
 
-      // Check if this slot is already booked
-      const isBooked = existingBookings.some((booking) => {
-        const bookingDate = booking.date;
-        return (
-          bookingDate === format(selectedDate, "yyyy-MM-dd") &&
-          (booking.startTime === startTime || booking.endTime === endTime)
-        );
-      });
+    //   // Check if this slot is already booked
+    //   const isBooked = existingBookings.some((booking) => {
+    //     const bookingDate = booking.date;
+    //     return (
+    //       bookingDate === format(selectedDate, "yyyy-MM-dd") &&
+    //       (booking.startTime === startTime || booking.endTime === endTime)
+    //     );
+    //   });
 
-      if (!isBooked) {
+     
+
+    const isBooked = existingBookings.some((booking) => {
+  const sameDate =
+    format(new Date(booking.date), "yyyy-MM-dd") ===
+    format(selectedDate, "yyyy-MM-dd");
+
+  if (!sameDate) return false;
+
+  const bookingStart = new Date(`2000-01-01T${booking.startTime}`);
+  const bookingEnd = new Date(`2000-01-01T${booking.endTime}`);
+  const slotStart = new Date(`2000-01-01T${startTime}`);
+  const slotEnd = new Date(`2000-01-01T${endTime}`);
+
+  // Check for any time overlap
+  return slotStart < bookingEnd && slotEnd > bookingStart;
+});
+ if (!isBooked) {
         slots.push({
           id: `${startTime}-${endTime}`,
           label: `${startTime} - ${endTime}`,
@@ -162,9 +179,10 @@ export function TestDriveForm({ car, testDriveInfo }) {
           endTime,
         });
       }
-    }
+    
+    
 
-    setAvailableTimeSlots(slots);
+    // setAvailableTimeSlots(slots);
 
     // Clear time slot selection when date changes
     setValue("timeSlot", "");
@@ -173,10 +191,14 @@ export function TestDriveForm({ car, testDriveInfo }) {
   // Create a function to determine which days should be disabled
   const isDayDisabled = (day) => {
     // Disable past dates
-    if (day < new Date()) {
+    if (day < new Date(new Date().setHours(0,0,0,0))) {
       return true;
     }
 
+     if (!dealership?.workingHours || dealership.workingHours.length === 0) {
+      console.warn("working hourse not found for dealership")
+    return false; // Allow all if no schedule info
+  }
     // Get day of week
     const dayOfWeek = format(day, "EEEE").toUpperCase();
 

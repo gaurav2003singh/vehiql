@@ -106,25 +106,25 @@ export async function getCars({
     if (search) {
       where.AND.push({
         OR: [
-          { make: { contains: search  } },
-          { model: { contains: search  } },
-          { description: { contains: search  } },
+          { make: { contains: search, mode: "insensitive" } },
+          { model: { contains: search, mode: "insensitive" } },
+          { description: { contains: search, mode: "insensitive" } },
         ],
       });
     }
 
     if (make) {
-      where.AND.push({ make: { contains: make  } });
+      where.AND.push({ make: { contains: make, mode: "insensitive" } });
     }
     if (bodyType) {
-      where.AND.push({ bodyType: { contains: bodyType  } });
+      where.AND.push({ bodyType: { contains: bodyType, mode: "insensitive" } });
     }
     if (fuelType) {
-      where.AND.push({ fuelType: { contains: fuelType  } });
+      where.AND.push({ fuelType: { contains: fuelType, mode: "insensitive" } });
     }
     if (transmission) {
       where.AND.push({
-        transmission: { contains: transmission  },
+        transmission: { contains: transmission, mode: "insensitive" },
       });
     }
 
@@ -160,10 +160,8 @@ export async function getCars({
     // Get total count for pagination
 
     const totalCars = await db.car.count({
-      where
+      where,
     });
-
-
 
     // Execute the main query
     const cars = await db.car.findMany({
@@ -326,26 +324,27 @@ export async function getCarById(carId) {
       isWishlisted = !!savedCar;
     }
 
-    // Check if user has already booked a test drive for this car
-    const existingTestDrive = await db.testDriveBooking.findFirst({
-      where: {
-        carId,
-        userId: dbUser.id,
-        status: { in: ["PENDING", "CONFIRMED", "COMPLETED"] },
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
-
     let userTestDrive = null;
 
-    if (existingTestDrive) {
-      userTestDrive = {
-        id: existingTestDrive.id,
-        status: existingTestDrive.status,
-        bookingDate: existingTestDrive.bookingDate.toISOString(),
-      };
+    if (dbUser) {
+      const existingTestDrive = await db.testDriveBooking.findFirst({
+        where: {
+          carId,
+          userId: dbUser.id,
+          status: { in: ["PENDING", "CONFIRMED", "COMPLETED"] },
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
+      });
+
+      if (existingTestDrive) {
+        userTestDrive = {
+          id: existingTestDrive.id,
+          status: existingTestDrive.status,
+          bookingDate: existingTestDrive.bookingDate.toISOString(),
+        };
+      }
     }
 
     // Get dealership info for test drive availability

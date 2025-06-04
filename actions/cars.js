@@ -1,14 +1,13 @@
 "use server";
 
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { v4 as uuidv4 } from "uuid";
 import { db } from "@/lib/prisma";
-import { promises as fs } from "fs";
-import path from "path";
+import { createClient } from "@/lib/supabase";
 import { auth } from "@clerk/nextjs/server";
-import { serializeCarData } from "@/lib/helper";
-import { url } from "inspector";
+import { serializeCarData } from "@/lib/helpers";
 
 // Function to convert File to base64
 async function fileToBase64(file) {
@@ -20,15 +19,19 @@ async function fileToBase64(file) {
 // Gemini AI integration for car image processing
 export async function processCarImageWithAI(file) {
   try {
+    // Check if API key is available
     if (!process.env.GEMINI_API_KEY) {
       throw new Error("Gemini API key is not configured");
     }
 
+    // Initialize Gemini API
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
+    // Convert image file to base64
     const base64Image = await fileToBase64(file);
 
+    // Create image part for the model
     const imagePart = {
       inlineData: {
         data: base64Image,
@@ -79,6 +82,7 @@ export async function processCarImageWithAI(file) {
     try {
       const carDetails = JSON.parse(cleanedText);
 
+      // Validate the response format
       const requiredFields = [
         "make",
         "model",
@@ -123,7 +127,6 @@ export async function processCarImageWithAI(file) {
 }
 
 // Add a car to the database with images
-
 export async function addCar({ carData, images }) {
   try {
     const { userId } = await auth();
@@ -132,44 +135,67 @@ export async function addCar({ carData, images }) {
     const user = await db.user.findUnique({
       where: { clerkUserId: userId },
     });
+
     if (!user) throw new Error("User not found");
 
+    // Create a unique folder name for this car's images
     const carId = uuidv4();
-    const folderPath = path.join(
-      process.cwd(),
-      "public",
-      "uploads",
-      "cars",
-      carId
-    );
+    const folderPath = `cars/${carId}`;
 
-    await fs.mkdir(folderPath, { recursive: true });
+    // Initialize Supabase client for server-side operations
+    const cookieStore = await cookies();
+    const supabase = createClient(cookieStore);
 
+    // Upload all images to Supabase storage
     const imageUrls = [];
 
     for (let i = 0; i < images.length; i++) {
       const base64Data = images[i];
-      if (!base64Data || !base64Data.startsWith("data:image/")) continue;
 
+      // Skip if image data is not valid
+      if (!base64Data || !base64Data.startsWith("data:image/")) {
+        console.warn("Skipping invalid image data");
+        continue;
+      }
+
+      // Extract the base64 part (remove the data:image/xyz;base64, prefix)
       const base64 = base64Data.split(",")[1];
       const imageBuffer = Buffer.from(base64, "base64");
 
+      // Determine file extension from the data URL
       const mimeMatch = base64Data.match(/data:image\/([a-zA-Z0-9]+);/);
       const fileExtension = mimeMatch ? mimeMatch[1] : "jpeg";
+
+      // Create filename
       const fileName = `image-${Date.now()}-${i}.${fileExtension}`;
+      const filePath = `${folderPath}/${fileName}`;
 
-      const filePath = path.join(folderPath, fileName);
-      const relativePath = `/uploads/cars/${carId}/${fileName}`;
+      // Upload the file buffer directly
+      const { data, error } = await supabase.storage
+        .from("car-images")
+        .upload(filePath, imageBuffer, {
+          contentType: `image/${fileExtension}`,
+        });
 
-      await fs.writeFile(filePath, imageBuffer);
-      imageUrls.push(relativePath); // store relative URL for use in frontend
+      if (error) {
+        console.error("Error uploading image:", error);
+        throw new Error(`Failed to upload image: ${error.message}`);
+      }
+
+      // Get the public URL for the uploaded file
+      const publicUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/car-images/${filePath}`; // disable cache in config
+
+      imageUrls.push(publicUrl);
     }
 
-    if (imageUrls.length < 3) throw new Error("At least 3 images required");
+    if (imageUrls.length === 0) {
+      throw new Error("No valid images were uploaded");
+    }
 
+    // Add the car to the database
     const car = await db.car.create({
       data: {
-        id: carId,
+        id: carId, // Use the same ID we used for the folder
         make: carData.make,
         model: carData.model,
         year: carData.year,
@@ -183,40 +209,33 @@ export async function addCar({ carData, images }) {
         description: carData.description,
         status: carData.status,
         featured: carData.featured,
-        images: {
-          create: imageUrls.map((url) => ({ url })),
-        },
+        images: imageUrls, // Store the array of image URLs
       },
     });
 
-    // await db.carImage.createMany({
-    //   data: imageUrls.map((url) => ({
-    //     carId: car.id,
-    //     url,
-    //   })),
-    // });
-
+    // Revalidate the cars list page
     revalidatePath("/admin/cars");
 
-    return { success: true };
+    return {
+      success: true,
+    };
   } catch (error) {
-    console.error("Error adding car:", error);
-    throw new Error("Error adding car: " + error.message);
+    throw new Error("Error adding car:" + error.message);
   }
 }
 
 // Fetch all cars with simple search
 export async function getCars(search = "") {
   try {
+    // Build where conditions
     let where = {};
 
     // Add search filter
-
-    if (typeof search === "string" && search.trim() !== "") {
+    if (search) {
       where.OR = [
-        { make: { contains: search } },
-        { model: { contains: search } },
-        { color: { contains: search } },
+        { make: { contains: search, mode: "insensitive" } },
+        { model: { contains: search, mode: "insensitive" } },
+        { color: { contains: search, mode: "insensitive" } },
       ];
     }
 
@@ -224,9 +243,6 @@ export async function getCars(search = "") {
     const cars = await db.car.findMany({
       where,
       orderBy: { createdAt: "desc" },
-      include: {
-        images: true,
-      },
     });
 
     const serializedCars = cars.map(serializeCarData);
@@ -245,19 +261,15 @@ export async function getCars(search = "") {
 }
 
 // Delete a car by ID
-
 export async function deleteCar(id) {
   try {
     const { userId } = await auth();
     if (!userId) throw new Error("Unauthorized");
 
-    // Step 1: Get the car and its image URLs
+    // First, fetch the car to get its images
     const car = await db.car.findUnique({
       where: { id },
-      include: {
-        images: true,
-      },
-      // select: { images: true },
+      select: { images: true },
     });
 
     if (!car) {
@@ -267,46 +279,52 @@ export async function deleteCar(id) {
       };
     }
 
-    // Step 2: Delete image files from local storage
-    for (const image of car.images) {
-      const filePath = path.join(process.cwd(), "public", image.url); // assuming image.url = "/uploads/cars/car-id/img.jpg"
-      try {
-        await fs.unlink(filePath);
-      } catch (err) {
-        console.warn("Failed to delete image:", filePath, err.message);
-      }
-    }
-
-    // Optionally: delete the entire folder for the car
-    const folderPath = path.join(
-      process.cwd(),
-      "public",
-      "uploads",
-      "cars",
-      id
-    );
-    try {
-      await fs.rmdir(folderPath, { recursive: true });
-    } catch (err) {
-      console.warn("Failed to delete folder:", folderPath, err.message);
-    }
-
-    // Step 3: Delete images from database
-    await db.carImage.deleteMany({
-      where: { carId: id },
-    });
-
-    // Step 4: Delete the car itself
+    // Delete the car from the database
     await db.car.delete({
       where: { id },
     });
 
-    return { success: true };
+    // Delete the images from Supabase storage
+    try {
+      const cookieStore = cookies();
+      const supabase = createClient(cookieStore);
+
+      // Extract file paths from image URLs
+      const filePaths = car.images
+        .map((imageUrl) => {
+          const url = new URL(imageUrl);
+          const pathMatch = url.pathname.match(/\/car-images\/(.*)/);
+          return pathMatch ? pathMatch[1] : null;
+        })
+        .filter(Boolean);
+
+      // Delete files from storage if paths were extracted
+      if (filePaths.length > 0) {
+        const { error } = await supabase.storage
+          .from("car-images")
+          .remove(filePaths);
+
+        if (error) {
+          console.error("Error deleting images:", error);
+          // We continue even if image deletion fails
+        }
+      }
+    } catch (storageError) {
+      console.error("Error with storage operations:", storageError);
+      // Continue with the function even if storage operations fail
+    }
+
+    // Revalidate the cars list page
+    revalidatePath("/admin/cars");
+
+    return {
+      success: true,
+    };
   } catch (error) {
     console.error("Error deleting car:", error);
     return {
       success: false,
-      error: "Something went wrong.",
+      error: error.message,
     };
   }
 }
