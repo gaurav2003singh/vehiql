@@ -63,9 +63,7 @@ export function CarDetails({ car, testDriveInfo }) {
     }
   }, [toggleError]);
 
-  // useEffect(() => {
-  //   console.log("Images array:", car.images);
-  // }, [car.images]);
+ 
 
   // Handle save car
   const handleSaveCar = async () => {
