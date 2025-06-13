@@ -211,14 +211,16 @@ const CarList = () => {
                     <TableRow key={car.id}>
                       <TableCell>
                         <div className="w-15 h-10 rounded-md overflow-hidden ">
-                         
                           {car.images && car.images.length > 0 ? (
                             <Image
-                              src={  car.images?.[0]
-                                ? car.images[0].url.startsWith("/")
-                                  ? car.images[0].url
-                                  : "/" + car.images[0].url
-                                : "/3.jpg"}
+                              src={
+                                car.images?.[0]
+                                  ? car.images[0].url.startsWith("http")
+                                    ? car.images[0].url
+                                    : "/" +
+                                      car.images[0].url.replace(/^\/+/, "")
+                                  : "/3.jpg"
+                              }
                               alt={`${car.make} ${car.model}`}
                               height={40}
                               width={40}

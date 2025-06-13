@@ -65,11 +65,11 @@ export const CarCard = ({ car }) => {
           <div className="relative w-full h-full ">
             <Image
               src={
-                car.images?.[0]?.url
-                  ? car.images[0].url.startsWith("/")
-                    ? car.images[0].url
-                    : "/" + car.images[0].url
-                  : ""
+                car.images?.[0]
+      ? car.images[0].url.startsWith("http")
+        ? car.images[0].url
+        : "/" + car.images[0].url.replace(/^\/+/, "")
+      : "/3.jpg"
               }
               alt={`${car.make} ${car.model}`}
               fill

@@ -5,9 +5,10 @@ import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { v4 as uuidv4 } from "uuid";
 import { db } from "@/lib/prisma";
-import { createClient } from "@/lib/supabase";
+// import { createClient } from "@/lib/supabase";
 import { auth } from "@clerk/nextjs/server";
 import { serializeCarData } from "@/lib/helper";
+import { uploadImage } from "@/lib/cloudinary";
 
 // Function to convert File to base64
 async function fileToBase64(file) {
@@ -138,64 +139,32 @@ export async function addCar({ carData, images }) {
 
     if (!user) throw new Error("User not found");
 
-    // Create a unique folder name for this car's images
     const carId = uuidv4();
-    const folderPath = `cars/${carId}`;
-
-    // Initialize Supabase client for server-side operations
-    const cookieStore = await cookies();
-    const supabase = createClient(cookieStore);
-
-    // Upload all images to Supabase storage
     const imageUrls = [];
 
     for (let i = 0; i < images.length; i++) {
       const base64Data = images[i];
 
-      // Skip if image data is not valid
       if (!base64Data || !base64Data.startsWith("data:image/")) {
         console.warn("Skipping invalid image data");
         continue;
       }
-
-      // Extract the base64 part (remove the data:image/xyz;base64, prefix)
-      const base64 = base64Data.split(",")[1];
-      const imageBuffer = Buffer.from(base64, "base64");
-
-      // Determine file extension from the data URL
-      const mimeMatch = base64Data.match(/data:image\/([a-zA-Z0-9]+);/);
-      const fileExtension = mimeMatch ? mimeMatch[1] : "jpeg";
-
-      // Create filename
-      const fileName = `image-${Date.now()}-${i}.${fileExtension}`;
-      const filePath = `${folderPath}/${fileName}`;
-
-      // Upload the file buffer directly
-      const { data, error } = await supabase.storage
-        .from("car-images")
-        .upload(filePath, imageBuffer, {
-          contentType: `image/${fileExtension}`,
-        });
-
-      if (error) {
-        console.error("Error uploading image:", error);
-        throw new Error(`Failed to upload image: ${error.message}`);
+      try {
+        const result = await uploadImage(base64Data, `car-images/${carId}`);
+        imageUrls.push(result.secure_url);
+      } catch (err) {
+        console.error("Cloudinary upload failed:", err);
+        // Optionally: throw err; to stop on first failure
       }
-
-      // Get the public URL for the uploaded file
-      const publicUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/car-images/${filePath}`; // disable cache in config
-
-      imageUrls.push(publicUrl);
     }
 
     if (imageUrls.length === 0) {
       throw new Error("No valid images were uploaded");
     }
 
-    // Add the car to the database
     const car = await db.car.create({
       data: {
-        id: carId, // Use the same ID we used for the folder
+        id: carId,
         make: carData.make,
         model: carData.model,
         year: carData.year,
@@ -209,11 +178,14 @@ export async function addCar({ carData, images }) {
         description: carData.description,
         status: carData.status,
         featured: carData.featured,
-        images: imageUrls, // Store the array of image URLs
+        images: {
+          create: imageUrls.map((url) => ({
+            url,
+          })),
+        },
       },
     });
 
-    // Revalidate the cars list page
     revalidatePath("/admin/cars");
 
     return {
@@ -243,6 +215,7 @@ export async function getCars(search = "") {
     const cars = await db.car.findMany({
       where,
       orderBy: { createdAt: "desc" },
+       include: { images: true }, 
     });
 
     const serializedCars = cars.map(serializeCarData);
@@ -285,34 +258,34 @@ export async function deleteCar(id) {
     });
 
     // Delete the images from Supabase storage
-    try {
-      const cookieStore = cookies();
-      const supabase = createClient(cookieStore);
+    // try {
+    //   const cookieStore = cookies();
+    //   const supabase = createClient(cookieStore);
 
-      // Extract file paths from image URLs
-      const filePaths = car.images
-        .map((imageUrl) => {
-          const url = new URL(imageUrl);
-          const pathMatch = url.pathname.match(/\/car-images\/(.*)/);
-          return pathMatch ? pathMatch[1] : null;
-        })
-        .filter(Boolean);
+    //   // Extract file paths from image URLs
+    //   const filePaths = car.images
+    //     .map((imageUrl) => {
+    //       const url = new URL(imageUrl);
+    //       const pathMatch = url.pathname.match(/\/car-images\/(.*)/);
+    //       return pathMatch ? pathMatch[1] : null;
+    //     })
+    //     .filter(Boolean);
 
       // Delete files from storage if paths were extracted
-      if (filePaths.length > 0) {
-        const { error } = await supabase.storage
-          .from("car-images")
-          .remove(filePaths);
+    //   if (filePaths.length > 0) {
+    //     const { error } = await supabase.storage
+    //       .from("car-images")
+    //       .remove(filePaths);
 
-        if (error) {
-          console.error("Error deleting images:", error);
-          // We continue even if image deletion fails
-        }
-      }
-    } catch (storageError) {
-      console.error("Error with storage operations:", storageError);
-      // Continue with the function even if storage operations fail
-    }
+    //     if (error) {
+    //       console.error("Error deleting images:", error);
+    //       // We continue even if image deletion fails
+    //     }
+    //   }
+    // } catch (storageError) {
+    //   console.error("Error with storage operations:", storageError);
+    //   // Continue with the function even if storage operations fail
+    // }
 
     // Revalidate the cars list page
     revalidatePath("/admin/cars");
